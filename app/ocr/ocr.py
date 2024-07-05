@@ -2,7 +2,7 @@ import os
 import numpy as np
 import cv2
 import pytesseract
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image
 from pdf2image import convert_from_path
 from tempfile import NamedTemporaryFile
 
@@ -29,7 +29,7 @@ def ocr_pdf(file, doc_type):
         with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
             temp_pdf.write(file.file.read())
             temp_pdf.flush()
-            images = convert_from_path(temp_pdf.name, first_page=1, last_page=10)
+            images = convert_from_path(temp_pdf.name, first_page=1, last_page=20)
         os.remove(temp_pdf.name)
     else:
         images = [Image.open(file.file)]
@@ -38,6 +38,7 @@ def ocr_pdf(file, doc_type):
     for image in images:
         preprocessed_image = preprocess_image(image)
         text += pytesseract.image_to_string(preprocessed_image, lang='spa')
+        print(text)
         text += "\n---\n"
-    print(text)
+
     return text
